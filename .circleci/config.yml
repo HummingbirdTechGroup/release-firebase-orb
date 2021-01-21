@@ -54,7 +54,7 @@ workflows:
       - hold-for-dev-publish:
           type: approval
           requires:
-            - orb-tools/lint
+            # - orb-tools/lint
             - orb-tools/pack
             # - bats/run
             - shellcheck/check

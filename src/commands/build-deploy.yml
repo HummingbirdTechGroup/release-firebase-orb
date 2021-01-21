@@ -55,7 +55,6 @@ steps:
       event: fail
   - slack/notify:
       channel: <<parameters.notify-channel-pass>>
-      mentions: <@URH8K2Z63>
       custom: |
         {
           "blocks": [
@@ -68,4 +67,4 @@ steps:
         		}
           ]
         }
-      event: p
+      event: pass

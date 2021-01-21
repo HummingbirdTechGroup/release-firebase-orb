@@ -1,7 +1,5 @@
 description: >
   A command to build using `yarn <your build-instruction>` and then deploys to Firebase hosting with `firebase deploy <your firebase-instruction> --token=$FIREBASE_TOKEN`
-# What will this job do?
-# Descriptions should be short, simple, and clear.
 
 parameters:
   firebase-instruction:

@@ -1,0 +1,71 @@
+description: >
+  Sample description
+# What will this job do?
+# Descriptions should be short, simple, and clear.
+
+executor: default
+
+parameters:
+  firebase-instruction:
+    type: string
+    description: Used to augment the `firebase deploy` command. i.e `firebase
+      deploy [your custom instruction] --token=$FIREBASE_TOKEN`.  Add
+      the desitination and project here. The command expects an
+      environment variable called FIREBASE_TOKEN to be in scope.
+  build-instruction:
+    type: string
+    default: build
+    description: The yarn instruction you want to use for the build stage. e.g
+      `yarn [your command]`
+  workflow-name:
+    type: string
+    default: Build & Deploy to Firebase
+  notify-channel-fail:
+    type: string
+    default: $SLACK_DEFAULT_CHANNEL
+  notify-channel-pass:
+    type: string
+    default: $SLACK_DEFAULT_CHANNEL
+
+steps:
+  - node/install-packages:
+      pkg-manager: yarn
+  - run:
+      name: Building Project
+      command: yarn <<parameters.build-instruction>>
+  - run:
+      name: Deploy to Firebase
+      command: ./node_modules/.bin/firebase deploy
+        <<parameters.firebase-instruction>> --token=$FIREBASE_TOKEN
+  - slack/notify:
+      channel: <<parameters.notify-channel-fail>>
+      mentions: "@here"
+      custom: |
+        {
+          "blocks": [
+           {
+        			"type": "section",
+        			"text": {
+        				"type": "mrkdwn",
+        				"text": "🛑😩🛑😩 *<<parameters.workflow-name>> Failed* 🛑😩🛑😩"
+        			}
+        		}
+          ]
+        }
+      event: fail
+  - slack/notify:
+      channel: <<parameters.notify-channel-pass>>
+      mentions: <@URH8K2Z63>
+      custom: |
+        {
+          "blocks": [
+           {
+        			"type": "section",
+        			"text": {
+        				"type": "mrkdwn",
+        				"text": "🎉🎉 *<<parameters.workflow-name>> Success* 🎉🎉"
+        			}
+        		}
+          ]
+        }
+      event: p

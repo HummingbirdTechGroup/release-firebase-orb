@@ -35,42 +35,8 @@ steps:
   - utility/restore-repo
   - attach_workspace:
       at: .
-  - run:
-      name: Create SA key JSON
-      command: echo $GSA_KEY > "$HOME"/gcloud_key.json
-  - run:
-      name: Deploy to Firebase
-      command:
-        GOOGLE_APPLICATION_CREDENTIALS="$HOME"/gcloud_key.json ./node_modules/.bin/firebase deploy
-        <<parameters.firebase-instruction>>
-  - slack/notify:
-      channel: <<parameters.notify-channel-fail>>
-      mentions: "@here"
-      custom: |
-        {
-          "blocks": [
-           {
-        			"type": "section",
-        			"text": {
-        				"type": "mrkdwn",
-        				"text": "🛑😩🛑😩 *<<parameters.workflow-name>> Failed* 🛑😩🛑😩"
-        			}
-        		}
-          ]
-        }
-      event: fail
-  - slack/notify:
-      channel: <<parameters.notify-channel-pass>>
-      custom: |
-        {
-          "blocks": [
-           {
-        			"type": "section",
-        			"text": {
-        				"type": "mrkdwn",
-        				"text": "🎉🎉 *<<parameters.workflow-name>> Success* 🎉🎉"
-        			}
-        		}
-          ]
-        }
-      event: pass
+  - deploy:
+      firebase-instruction: <<parameters.firebase-instruction>>
+      workflow-name: <<parameters.workflow-name>>
+      notify-channel-fail: <<parameters.notify-channel-fail>>
+      notify-channel-pass: <<parameters.notify-channel-pass>>

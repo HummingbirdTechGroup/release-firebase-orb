@@ -1,0 +1,42 @@
+description: >
+  A job to deploy to Firebase hosting with `firebase deploy <your firebase-instruction>`. 
+  Persisted files will be attached to root.
+
+parameters:
+  firebase-instruction:
+    type: string
+    description: Used to augment the `firebase deploy` command. i.e `firebase
+      deploy [your custom instruction]`.
+      Add the destination and project here. This expects a variable called GOOGLE_APPLICATION_CREDENTIALS to be in scope.
+      The var should contain the path to a file holding the service account JSON file.
+      You can alternatively include a FIRBASE_TOKEN variable.
+  workflow-name:
+    type: string
+    default: Deploy to Firebase
+  notify-channel-fail:
+    type: string
+    default: $SLACK_DEFAULT_CHANNEL
+  notify-channel-pass:
+    type: string
+    default: $SLACK_DEFAULT_CHANNEL
+
+  version:
+    default: "15.1"
+    description: >
+      A full version tag must be specified. Example: "13.11.0" For a full list
+      of releases, see the following: https://nodejs.org/en/download/releases
+    type: string
+
+executor:
+  name: default
+  tag: << parameters.version >>
+
+steps:
+  - utility/restore-repo
+  - attach_workspace:
+      at: .
+  - deploy:
+      firebase-instruction: <<parameters.firebase-instruction>>
+      workflow-name: <<parameters.workflow-name>>
+      notify-channel-fail: <<parameters.notify-channel-fail>>
+      notify-channel-pass: <<parameters.notify-channel-pass>>

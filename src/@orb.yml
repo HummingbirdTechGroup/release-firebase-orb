@@ -12,3 +12,4 @@ display:
 orbs:
   node: circleci/node@4.1
   slack: circleci/slack@4.2.0
+  utility: hummingbirdtech/node-fe-utility@1.0.0

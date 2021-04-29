@@ -25,7 +25,8 @@ steps:
       command: echo $GSA_KEY > "$HOME"/gcloud_key.json
   - run:
       name: Deploy to Firebase
-      command: ./node_modules/.bin/firebase deploy
+      command:
+        GOOGLE_APPLICATION_CREDENTIALS="$HOME"/gcloud_key.json ./node_modules/.bin/firebase deploy
         <<parameters.firebase-instruction>>
   - slack/notify:
       channel: <<parameters.notify-channel-fail>>

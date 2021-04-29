@@ -1,5 +1,9 @@
+orbs:
+  utility: hummingbirdtech/node-fe-utility@1.0.0
+
 description: >
-  A command to deploy to Firebase hosting with `firebase deploy <your firebase-instruction>`
+  A job to deploy to Firebase hosting with `firebase deploy <your firebase-instruction>`. 
+  Persisted files will be attached to root.
 
 parameters:
   firebase-instruction:
@@ -19,7 +23,21 @@ parameters:
     type: string
     default: $SLACK_DEFAULT_CHANNEL
 
+  version:
+    default: "15.1"
+    description: >
+      A full version tag must be specified. Example: "13.11.0" For a full list
+      of releases, see the following: https://nodejs.org/en/download/releases
+    type: string
+
+executor:
+  name: default
+  tag: << parameters.version >>
+
 steps:
+  - utility/restore-repo
+  - attach_workspace:
+      at: .
   - run:
       name: Create SA key JSON
       command: echo $GSA_KEY > "$HOME"/gcloud_key.json

@@ -1,17 +1,21 @@
 description: >
-  A command to deploy to Firebase hosting with `firebase deploy <your firebase-instruction>`
+  A command to build using `yarn <your build-instruction>` and then deploys to Firebase hosting with `firebase deploy <your firebase-instruction> --token=$FIREBASE_TOKEN`
 
 parameters:
   firebase-instruction:
     type: string
     description: Used to augment the `firebase deploy` command. i.e `firebase
-      deploy [your custom instruction]`.
-      Add the destination and project here. This expects a variable called GOOGLE_APPLICATION_CREDENTIALS to be in scope.
-      The var should contain the path to a file holding the service account JSON file.
-      You can alternatively include a FIREBASE_TOKEN variable.
+      deploy [your custom instruction] --token=$FIREBASE_TOKEN`.  Add
+      the desitination and project here. The command expects an
+      environment variable called FIREBASE_TOKEN to be in scope.
+  build-instruction:
+    type: string
+    default: build
+    description: The yarn instruction you want to use for the build stage. e.g
+      `yarn [your command]`
   workflow-name:
     type: string
-    default: Deploy to Firebase
+    default: Build & Deploy to Firebase
   notify-channel-fail:
     type: string
     default: $SLACK_DEFAULT_CHANNEL
@@ -20,14 +24,15 @@ parameters:
     default: $SLACK_DEFAULT_CHANNEL
 
 steps:
+  - node/install-packages:
+      pkg-manager: yarn
   - run:
-      name: Create SA key JSON
-      command: echo $GSA_KEY > "$HOME"/gcloud_key.json
+      name: Building Project
+      command: yarn <<parameters.build-instruction>>
   - run:
       name: Deploy to Firebase
-      command:
-        GOOGLE_APPLICATION_CREDENTIALS="$HOME"/gcloud_key.json ./node_modules/.bin/firebase deploy
-        <<parameters.firebase-instruction>>
+      command: ./node_modules/.bin/firebase deploy
+        <<parameters.firebase-instruction>> --token=$FIREBASE_TOKEN
   - slack/notify:
       channel: <<parameters.notify-channel-fail>>
       mentions: "@here"

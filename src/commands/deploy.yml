@@ -8,7 +8,7 @@ parameters:
       deploy [your custom instruction]`.
       Add the destination and project here. This expects a variable called GOOGLE_APPLICATION_CREDENTIALS to be in scope.
       The var should contain the path to a file holding the service account JSON file.
-      You can alternatively include a FIRBASE_TOKEN variable.
+      You can alternatively include a FIREBASE_TOKEN variable.
   workflow-name:
     type: string
     default: Deploy to Firebase

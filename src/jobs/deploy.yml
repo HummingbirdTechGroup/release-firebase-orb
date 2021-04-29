@@ -1,7 +1,6 @@
 description: >
   A job to deploy to Firebase hosting with `firebase deploy <your firebase-instruction>`. 
   Persisted files will be attached to root.
-  Requires the orb `hummingbirdtech/node-fe-utility` to be in scope as `utility`
 
 parameters:
   firebase-instruction:
